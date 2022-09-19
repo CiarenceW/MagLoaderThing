@@ -1,46 +1,37 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
-using Receiver2;
+using HarmonyLib;
 using UnityEngine;
-using System.Collections;
-using System.Linq;
-using System;
+using Receiver2;
 
 namespace MagLoaderThing
 {
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
     public class Plugin : BaseUnityPlugin
     {
-        //public static ConfigEntry<string> enable_key;
-        private void Awake()
-        {
-            // Plugin startup logic
+        private static ConfigEntry<bool> magloader_enabled;
+        private static GameObject shooting_range_magloader;
+        private static GameObject challenge_dome_magloader;
+
+        private void Awake() {
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
 
-            instance = this;
+            magloader_enabled = Config.Bind("Magloader settings", "Enable the magloader", true, "Should the magloader appear in the Compound");
 
-            //enable_key = Config.Bind("Key config", "chosen key", "m", "this is the key to enable the mag loaders");
+            Harmony.CreateAndPatchAll(this.GetType());
         }
-        static Plugin instance;
-        public GameObject ammoBox1;
-        public GameObject ammoBox2;
-        internal void Update()
-        {
-            /*string ebable_bey = enable_key.ToString();
-            //LOSING MYT FUCKING MINd!!!!!!!!!!!!!
-            if (Input.GetKeyDown("b"))
-            {
-                Debug.Log(ebable_bey);
-            }
-            // i will fucking kill you if you don't work */
-            if (Input.GetKeyDown("b"))
-            {
-                ammoBox1 = GameObject.Find("/Challenge Room/Challenge Room Geometry/AmmoTable/MagazineLoader");
-                ammoBox2 = GameObject.Find("/Shooting Range/Gameplay/Ammo Tables/MagazineLoader");
-                ammoBox1.SetActive(true);
-                ammoBox2.SetActive(true);
-                Debug.Log("yep it should've worked");
-            }
+
+        [HarmonyPatch(typeof(ReceiverCoreScript), "SpawnPlayer")]
+        [HarmonyPostfix]
+        private static void OnStartCompound() {
+            if (ReceiverCoreScript.Instance().game_mode.GetGameMode() != GameMode.ReceiverMall) return;
+            shooting_range_magloader = GameObject.Find("/Shooting Range/Gameplay/Ammo Tables/MagazineLoader");
+            challenge_dome_magloader = GameObject.Find("/Challenge Room/Challenge Room Geometry/AmmoTable/MagazineLoader");
+        }
+
+        private void Update() {
+            if (shooting_range_magloader != null) shooting_range_magloader.SetActive(magloader_enabled.Value);
+            if (challenge_dome_magloader != null) challenge_dome_magloader.SetActive(magloader_enabled.Value);
         }
     }
 }
