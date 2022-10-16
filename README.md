@@ -1,6 +1,6 @@
 Re-enables the magazine loaders in the compound that were disabled.
 
-<image align="left" src="images/ammoboxChallengeDome.png"> <image aling="right" src="images/ammoboxShootlingLanes.png">
+<image align="left" width="495" src="images/ammoboxChallengeDome.png"> <image aling="right" width="495" src="images/ammoboxShootingLanes.png">
 
 ## Installation
 - Install the [latest BepinEx 5 release](https://github.com/BepInEx/BepInEx/releases/tag/v5.4.21) </br>
