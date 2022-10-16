@@ -1,5 +1,7 @@
 Re-enables the magazine loaders in the compound that were disabled.
 
+<image align="left" src="images/ammoboxChallengeDome.png"> <image aling="right" src="images/ammoboxShootlingLanes.png">
+
 ## Installation
 - Install the [latest BepinEx 5 release](https://github.com/BepInEx/BepInEx/releases/tag/v5.4.21) </br>
 - Extract the MagLoaderThing folder to (where you have Receiver 2 installed) Receiver 2\BepInEx\plugins
