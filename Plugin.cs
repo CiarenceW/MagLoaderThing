@@ -3,6 +3,9 @@ using BepInEx.Configuration;
 using HarmonyLib;
 using UnityEngine;
 using Receiver2;
+using UnityEngine;
+using System.Collections;
+using System.Linq;
 using System;
 
 namespace MagLoaderThing
