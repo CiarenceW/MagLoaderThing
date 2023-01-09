@@ -1,74 +1,57 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
+using HarmonyLib;
+using UnityEngine;
 using Receiver2;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Linq;
 using System;
 
 namespace MagLoaderThing
 {
-    [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, "1.1.0")]
+    [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
     public class Plugin : BaseUnityPlugin
     {
-        public static ConfigEntry<bool> enable_key;
-        public bool plugin_done = false;
-        private void Awake()
-        {
-            // Plugin startup logic
+        private static ConfigEntry<bool> magloader_enabled;
+        private static GameObject shooting_range_magloader;
+        private static GameObject challenge_dome_magloader;
+
+        private void Awake() {
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
 
-            enable_key = Config.Bind("Manual Activation", "Activate manually, (if true, uses Ending Mistake key)", false, "this is the key to enable the mag loaders");
+            magloader_enabled = Config.Bind("Magloader settings", "Enable the magloader", true, "Should the magloader appear in the Compound");
+
+			magloader_enabled.SettingChanged += (object sender, EventArgs args) => {
+				if (shooting_range_magloader != null) shooting_range_magloader.SetActive(magloader_enabled.Value);
+				if (challenge_dome_magloader != null) challenge_dome_magloader.SetActive(magloader_enabled.Value);
+
+				Debug.Log("Enabled");
+			};
+
+            Harmony.CreateAndPatchAll(this.GetType());
         }
-        public GameObject ammoBox1;
-        public GameObject ammoBox2;
-        internal void Update()
-        {
-            /*string ebable_bey = enable_key.ToString();
-            //LOSING MYT FUCKING MINd!!!!!!!!!!!!!
-            if (Input.GetKeyDown("b"))
-            {
-                Debug.Log(ebable_bey);
-            }
-            // i will fucking kill you if you don't work */
-            LocalAimHandler lah = LocalAimHandler.player_instance;
-            Scene scene = SceneManager.GetActiveScene();
-            if (Input.GetKeyDown("b"))
-            {
-                Debug.Log(scene.name);
-            }
-            if (scene.name == "ReceiverMall")
-            {
-                if (plugin_done == false)
-                {
-                    if (enable_key.Value == true)
-                    {
-                        if (lah.character_input.GetButtonUp(73))
-                        {
-                            ammoBox1 = GameObject.Find("/Challenge Room/Challenge Room Geometry/AmmoTable/MagazineLoader");
-                            ammoBox2 = GameObject.Find("/Shooting Range/Gameplay/Ammo Tables/MagazineLoader");
-                            ammoBox1.SetActive(true);
-                            ammoBox2.SetActive(true);
-                            Debug.Log("yep it should've worked");
-                            plugin_done = true;
-                        }
-                    }
-                    else if (enable_key.Value == false)
-                    {
-                        ammoBox1 = GameObject.Find("/Challenge Room/Challenge Room Geometry/AmmoTable/MagazineLoader");
-                        ammoBox2 = GameObject.Find("/Shooting Range/Gameplay/Ammo Tables/MagazineLoader");
-                        ammoBox1.SetActive(true);
-                        ammoBox2.SetActive(true);
-                        Debug.Log("yep it should've worked");
-                        plugin_done = true;
-                    }
-                }
-            }
-            else
-            {
-                plugin_done=false;
-            }
-        }
+
+        [HarmonyPatch(typeof(ReceiverCoreScript), "SpawnPlayer")]
+        [HarmonyPostfix]
+        private static void OnStartCompound() {
+            if (ReceiverCoreScript.Instance().game_mode.GetGameMode() != GameMode.ReceiverMall) return;
+
+            shooting_range_magloader = GameObject.Find("/Shooting Range/Gameplay/Ammo Tables/MagazineLoader");
+			if (shooting_range_magloader != null) {
+				shooting_range_magloader.SetActive(magloader_enabled.Value);
+
+				DestroyImmediate(shooting_range_magloader.transform.Find("collider").GetComponent<MagazineLoader>());
+				shooting_range_magloader.transform.Find("collider").gameObject.AddComponent<AutomaticMagLoader>();
+			}
+
+            challenge_dome_magloader = GameObject.Find("/Challenge Room/Challenge Room Geometry/AmmoTable/MagazineLoader");
+			if (challenge_dome_magloader != null) {
+				challenge_dome_magloader.SetActive(magloader_enabled.Value);
+
+				DestroyImmediate(challenge_dome_magloader.transform.Find("collider").GetComponent<MagazineLoader>());
+				challenge_dome_magloader.transform.Find("collider").gameObject.AddComponent<AutomaticMagLoader>();
+			}
+		}
     }
 }

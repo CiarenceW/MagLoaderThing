@@ -33,9 +33,6 @@
     <Reference Include="ImGui">
       <HintPath>C:\Users\coren\source\repos\GoodOldIMGUImenu\Libraries\ImGui.dll</HintPath>
     </Reference>
-    <Reference Include="R2CustomSounds">
-      <HintPath>C:\Users\coren\source\repos\GoodOldIMGUImenu\Libraries\R2CustomSounds.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>C:\Users\coren\source\repos\GoodOldIMGUImenu\Libraries\UnityEngine.dll</HintPath>
     </Reference>
@@ -46,7 +43,7 @@
       <HintPath>C:\Users\coren\source\repos\GoodOldIMGUImenu\Libraries\Wolfire.dll</HintPath>
     </Reference>
     <Reference Include="Wolfire.Receiver2">
-      <HintPath>C:\Users\coren\source\repos\GoodOldIMGUImenu\Libraries\Wolfire.Receiver2.dll</HintPath>
+      <HintPath>D:\Szkolne\Programowanie\C#\Beniz\Receiver2ModdingKit\lib\Wolfire.Receiver2.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>
