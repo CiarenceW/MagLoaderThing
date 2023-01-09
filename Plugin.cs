@@ -32,7 +32,9 @@ namespace MagLoaderThing
                 Debug.Log(ebable_bey);
             }
             // i will fucking kill you if you don't work */
-            LocalAimHandler lah = LocalAimHandler.player_instance;
+            LocalAimHandler pi = LocalAimHandler.player_instance;
+            LocalAimHandler lah = new LocalAimHandler();
+            GunScript gunscript;
             Scene scene = SceneManager.GetActiveScene();
             if (Input.GetKeyDown("b"))
             {
@@ -44,7 +46,7 @@ namespace MagLoaderThing
                 {
                     if (enable_key.Value == true)
                     {
-                        if (lah.character_input.GetButtonUp(73))
+                        if (pi.character_input.GetButtonUp(73))
                         {
                             ammoBox1 = GameObject.Find("/Challenge Room/Challenge Room Geometry/AmmoTable/MagazineLoader");
                             ammoBox2 = GameObject.Find("/Shooting Range/Gameplay/Ammo Tables/MagazineLoader");
@@ -63,11 +65,13 @@ namespace MagLoaderThing
                         Debug.Log("yep it should've worked");
                         plugin_done = true;
                     }
+                    lah.TryGetGun(out gunscript);
+                    
                 }
             }
             else
             {
-                plugin_done=false;
+                plugin_done = false;
             }
         }
     }
